@@ -1,4 +1,5 @@
 import umap
+
 import torch
 import torch.nn as nn
 import torchvision
@@ -8,7 +9,7 @@ import torchvision.datasets as datasets
 import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
-from sklearn.decomposition import PCA
+# from sklearn.decomposition import PCA
 
 device    = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -17,10 +18,11 @@ dataset    = datasets.MNIST(root='./MNIST', train=True, download=True, transform
 dataloader = DataLoader(dataset, batch_size=len(dataset), shuffle=False)
 
 images, labels  = next(iter(dataloader))  
-images     = images.view(len(dataset), -1).numpy()  
+images          = images.view(len(dataset), -1).numpy()  
 
-reducer   = umap.UMAP(n_neighbors=15, min_dist=0.1, n_components=2)
-embedding = reducer.fit_transform(images)
+reducer   = umap.UMAP(n_neighbors=15, min_dist=0.1, n_components=30)
+reducer.fit(images)
+embedding = reducer.transform(images)
 
 plt.scatter(embedding[:, 0], embedding[:, 1], c=labels, cmap='viridis')
 plt.xlabel('UMAP 1st component')
